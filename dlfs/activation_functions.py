@@ -19,3 +19,22 @@ def sigmoid_deriv(dA, Z):
     assert (dZ.shape == Z.shape)
 
     return dZ
+
+def relu(Z):
+    """Return the ReLU of Z."""
+    A = np.maximum(0, Z)
+
+    assert(A.shape == Z.shape)
+
+    return A
+
+def relu_deriv(dA, Z):
+    """Return the derivative of the ReLU of Z, with respect to dA."""
+    dZ = np.array(dA, copy=True) # just converting dz to a correct object.  the
+    # the derivative is 1 if dZ[i] > 0, otherwise it is 0. with a special case
+    # for i = 0, which is set to 0 here.
+    dZ[Z <= 0] = 0
+
+    assert (dZ.shape == Z.shape)
+
+    return dZ
