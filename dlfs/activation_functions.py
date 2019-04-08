@@ -9,7 +9,8 @@ def sigmoid(Z):
 
     assert(A.shape == Z.shape)
 
-    return A
+    activation_cache = Z
+    return A, activation_cache
 
 def sigmoid_deriv(dA, Z):
     """Return the derivative of sigmoid of Z, with respect to dA."""
@@ -26,7 +27,8 @@ def relu(Z):
 
     assert(A.shape == Z.shape)
 
-    return A
+    activation_cache = Z
+    return A, activation_cache
 
 def relu_deriv(dA, Z):
     """Return the derivative of the ReLU of Z, with respect to dA."""
