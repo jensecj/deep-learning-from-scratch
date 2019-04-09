@@ -14,7 +14,7 @@ def sigmoid(Z):
 
 def sigmoid_deriv(dA, Z):
     """Return the derivative of sigmoid of Z, with respect to dA."""
-    s = sigmoid(Z);
+    s, _ = sigmoid(Z);
     dZ = dA * s * (1-s)
 
     assert (dZ.shape == Z.shape)
