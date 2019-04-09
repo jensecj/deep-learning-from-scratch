@@ -61,8 +61,8 @@ def test_L_model_forward():
                                  [-0.33588161, 1.23773784, 0.11112817, 0.12915125],
                                  [0.07612761, -0.15512816, 0.63422534, 0.810655]])
 
-    weights = {1: W1, 2: W2, 3: W3}
-    biases = {1: b1, 2: b2, 3: b3}
+    weights = [W1, W2, W3]
+    biases = [b1, b2, b3]
 
     last_activations, cache = L_model_forward(prev_activations, weights, biases)
     assert_allclose(last_activations, np.array([[0.03921668, 0.70498921, 0.19734387, 0.04728177]]), rtol=1e-5, atol=0)
@@ -82,6 +82,8 @@ def test_linear_backward():
     linear_cache = (A, W, b)
 
     prev_activation_derivatives, weight_derivatives, bias_derivatives = linear_backward(dZ, linear_cache)
+
+    assert(len(prev_activation_derivatives) == 3)
 
     assert_allclose(prev_activation_derivatives, np.array([[ 0.51822968, -0.19517421],
                                                            [-0.40506361, 0.15255393],

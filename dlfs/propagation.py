@@ -63,14 +63,13 @@ def L_model_forward(X, weights, biases):
     L = len(biases) # number of layers in the neural network
 
     # Implement [LINEAR -> RELU]*(L-1). Add "cache" to the "caches" list.
-    for l in range(1, L):
-        print('in layer {0} pa: {1}, w: {2}, b: {3}'.format(l, activations.shape, weights[l].shape, biases[l].shape))
+    for l in range(L-1):
         prev_activations = activations
         activations, cache = linear_activation_forward(prev_activations, weights[l], biases[l], A.relu)
         caches.append(cache)
 
     # Implement LINEAR -> SIGMOID. Add "cache" to the "caches" list.
-    last_activations, cache = linear_activation_forward(activations, weights[L], biases[L], A.sigmoid)
+    last_activations, cache = linear_activation_forward(activations, weights[L-1], biases[L-1], A.sigmoid)
     caches.append(cache)
 
     assert(last_activations.shape == (1, X.shape[1]))
@@ -141,26 +140,36 @@ def L_model_backward(last_activations, labels, caches):
              gradients["dW" + str(l)] = ...
              gradients["db" + str(l)] = ...
     """
-    activation_gradients = {}
-    weight_gradients = {}
-    bias_gradients = {}
-
     L = len(caches) # the number of layers
     m = last_activations.shape[1]
     labels = labels.reshape(last_activations.shape) # after this line, labels is the same shape as last_activations
 
-    # Initializing the backpropagation
-    last_activation_derivatives = - (np.divide(labels, last_activations) - np.divide(1 - labels, 1 - last_activations)) # derivative of cost with respect to last_activations
-
-    # Lth layer (SIGMOID -> LINEAR) gradients. Inputs: "last_activation_derivatives, current_cache". Outputs: "gradients["last_activation_derivatives-1"], gradients["dWL"], gradients["dbL"]
+    # We start from the last layer and work backwards.
+    # start with the last cache.
     current_cache = caches[L-1]
-    activation_gradients[L-1], weight_gradients[L], bias_gradients[L] = linear_activation_backward(last_activation_derivatives, current_cache, A.sigmoid_deriv)
+
+    # the derivative of the cost with respect to the last activations
+    last_activation_derivative = - (np.divide(labels, last_activations) - np.divide(1 - labels, 1 - last_activations))
+
+    activation_gradients = {}
+    weight_gradients = {}
+    bias_gradients = {}
+
+    # Lth layer (SIGMOID -> LINEAR) gradients. Inputs: "last_activation_derivative, current_cache". Outputs: "gradients["last_activation_derivative-1"], gradients["dWL"], gradients["dbL"]
+    dA, dW, db = linear_activation_backward(last_activation_derivative, current_cache, A.sigmoid_deriv)
+    activation_gradients[L-1] = dA
+    weight_gradients[L] = dW
+    bias_gradients[L] = db
 
     # Loop from l=L-2 to l=0
     for l in reversed(range(L-1)):
         # lth layer: (RELU -> LINEAR) gradients.
         # Inputs: "gradients["dA" + str(l + 1)], current_cache". Outputs: "gradients["dA" + str(l)] , gradients["dW" + str(l + 1)] , gradients["db" + str(l + 1)]
         current_cache = caches[l]
-        activation_gradients[l], weight_gradients[l + 1], bias_gradients[l + 1] = linear_activation_backward(activation_gradients[l + 1], current_cache, A.relu_deriv)
+
+        dA, dW, db = linear_activation_backward(activation_gradients[l + 1], current_cache, A.relu_deriv)
+        activation_gradients[l] = dA
+        weight_gradients[l + 1] = dW
+        bias_gradients[l + 1] = db
 
     return activation_gradients, weight_gradients, bias_gradients
