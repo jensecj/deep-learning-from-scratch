@@ -1,42 +1,72 @@
 import numpy as np
 
-def sigmoid(Z):
-    """
-    Vectorized sigmoid of numpy array Z.
-    sigmoid(z) = 1 / (1 + e^-z)
-    """
-    A = 1 / (1 + np.exp(-Z))
+class sigmoid:
+    @staticmethod
+    def forward(Z):
+        """
+        Vectorized sigmoid of numpy array Z.
+        sigmoid(z) = 1 / (1 + e^-z)
+        """
+        A = 1 / (1 + np.exp(-Z))
 
-    assert(A.shape == Z.shape)
+        assert(A.shape == Z.shape)
 
-    activation_cache = Z
-    return A, activation_cache
+        return A, Z
 
-def sigmoid_deriv(dA, Z):
-    """Return the derivative of sigmoid of Z, with respect to dA."""
-    s, _ = sigmoid(Z);
-    dZ = dA * s * (1-s)
+    @staticmethod
+    def backward(dA, Z):
+        """Return the derivative of sigmoid of Z, with respect to dA."""
+        s, _ = sigmoid.forward(Z);
+        dZ = dA * s * (1-s)
 
-    assert (dZ.shape == Z.shape)
+        assert (dZ.shape == Z.shape)
 
-    return dZ
+        return dZ
 
-def relu(Z):
-    """Return the ReLU of Z."""
-    A = np.maximum(0, Z)
+class tanh:
+    @staticmethod
+    def forward(Z):
+        """
+        """
+        A = (np.exp(Z) - np.exp(-Z)) / (np.exp(Z) + np.exp(-Z))
 
-    assert(A.shape == Z.shape)
+        assert(A.shape == Z.shape)
 
-    activation_cache = Z
-    return A, activation_cache
+        return A, Z
 
-def relu_deriv(dA, Z):
-    """Return the derivative of the ReLU of Z, with respect to dA."""
-    dZ = np.array(dA, copy=True) # just converting dz to a correct object.  the
-    # the derivative is 1 if dZ[i] > 0, otherwise it is 0. with a special case
-    # for i = 0, which is set to 0 here.
-    dZ[Z <= 0] = 0
+    @staticmethod
+    def backward(dA, Z):
+        A, _ = tanh.forward(Z)
+        dZ = dA * (1 - np.power(A, 2))
 
-    assert (dZ.shape == Z.shape)
+        assert (dZ.shape == Z.shape)
 
-    return dZ
+        return dZ
+
+class relu:
+    @staticmethod
+    def forward(Z):
+        """Return the ReLU of Z."""
+        A = np.maximum(0, Z)
+
+        assert(A.shape == Z.shape)
+
+        return A, Z
+
+    @staticmethod
+    def backward(dA, Z):
+        """Return the derivative of the ReLU of Z, with respect to dA."""
+        d = np.array(dA, copy=True) # just converting dz to a correct object.  the
+        # the derivative is 1 if dZ[i] > 0, otherwise it is 0. with a special case
+        # for i = 0, which is set to 0 here.
+        d[Z <= 0] = 0
+        d[Z > 0] = 1
+
+        dZ = dA * d
+
+        assert (dZ.shape == Z.shape)
+
+        return dZ
+
+
+# TODO: leaky_relu, softmax, ...
