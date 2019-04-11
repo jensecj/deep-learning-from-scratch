@@ -8,7 +8,9 @@ import dlfs.network as nn
 from dlfs.network import Layer, Network
 
 def test_initialize_network_with_one_hidden_layer():
-    layers = [ Layer(5, A.relu), Layer(4, A.relu), Layer(1, A.sigmoid) ]
+    layers = [ Layer(5),
+               Layer(4, A.relu),
+               Layer(1, A.sigmoid) ]
     net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
 
     parameters = nn._initialize_parameters(net)
@@ -20,7 +22,11 @@ def test_initialize_network_with_one_hidden_layer():
     assert(parameters["b2"].shape == (1,1))
 
 def test_initialize_network_with_many_hidden_layers():
-    layers = [ Layer(10, A.relu), Layer(6, A.relu), Layer(6, A.relu), Layer(3, A.relu), Layer(2, A.sigmoid) ]
+    layers = [ Layer(10),
+               Layer(6, A.relu),
+               Layer(6, A.relu),
+               Layer(3, A.relu),
+               Layer(2, A.sigmoid) ]
     net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
 
     parameters = nn._initialize_parameters(net)
@@ -61,7 +67,7 @@ def test_predict():
     output_layers = 1
 
     layers = [
-        Layer(input_layers, A.tanh),
+        Layer(input_layers),
         Layer(4, A.tanh),
         Layer(output_layers, A.sigmoid)
     ]
@@ -74,9 +80,6 @@ def test_predict():
     # assert(predictions.shape == (input_layers, 1))
 
     # assert_allclose(np.mean(predictions), 0.666666667)
-
-
-
 
 ###############
 # propagation #
@@ -232,7 +235,9 @@ def test_backward_propagation():
 
     caches = (linear_cache_activation_1, linear_cache_activation_2)
 
-    layers = [Layer(3, A.relu), Layer(2, A.relu), Layer(1, A.sigmoid)]
+    layers = [ Layer(3),
+               Layer(2, A.relu),
+               Layer(1, A.sigmoid) ]
     net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
 
     # activation_gradients, weight_gradients, bias_gradients = nn._backward_propagation(net, last_activations, labels, caches)

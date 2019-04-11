@@ -37,7 +37,7 @@ print(labels.shape)
 input_layers = inputs.shape[0]
 
 layers = [
-    Layer(input_layers, A.tanh),
+    Layer(input_layers),
     Layer(5, A.tanh),
     Layer(1, A.sigmoid)
 ]
