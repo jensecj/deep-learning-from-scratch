@@ -68,5 +68,30 @@ class relu:
 
         return dZ
 
+class leaky_relu:
+    @staticmethod
+    def forward(Z):
+        """Return the ReLU of Z."""
+        A = np.maximum(0.01*Z, Z)
 
-# TODO: leaky_relu, softmax, ...
+        assert(A.shape == Z.shape)
+
+        return A, Z
+
+    @staticmethod
+    def backward(dA, Z):
+        """Return the derivative of the ReLU of Z, with respect to dA."""
+        d = np.array(dA, copy=True) # just converting dz to a correct object.  the
+        # the derivative is 1 if dZ[i] > 0, otherwise it is 0. with a special case
+        # for i = 0, which is set to 0 here.
+        d[Z <= 0] = 0.01
+        d[Z > 0] = 1
+
+        dZ = dA * d
+
+        assert (dZ.shape == Z.shape)
+
+        return dZ
+
+
+# TODO: softmax, ...

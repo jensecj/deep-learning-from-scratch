@@ -422,3 +422,143 @@ def test_relu_backward_with_zero_dA_zero_Z():
 
     assert(dZ.shape == Z.shape)
     assert_allclose(dZ, np.array([0]))
+
+
+##############
+# leaky relu #
+##############
+
+def test_leaky_relu_forward_with_negative():
+    input = np.array([-1])
+
+    activation, activation_cache = A.leaky_relu.forward(input)
+
+    assert(activation.shape == input.shape)
+    assert(len(activation_cache) == len(input))
+    assert(len(activation) == len(input))
+    assert_allclose(activation, np.array([-0.01]))
+
+def test_leaky_relu_forward_with_positive():
+    input = np.array([1])
+
+    activation, activation_cache = A.leaky_relu.forward(input)
+
+    assert(activation.shape == input.shape)
+    assert(len(activation_cache) == len(input))
+    assert(len(activation) == len(input))
+    assert_allclose(activation, np.array([1]))
+
+def test_leaky_relu_forward_with_zero():
+    input = np.array([0])
+
+    activation, activation_cache = A.leaky_relu.forward(input)
+
+    assert(activation.shape == input.shape)
+    assert(len(activation_cache) == len(input))
+    assert(len(activation) == len(input))
+    assert_allclose(activation, np.array([0]))
+
+def test_leaky_relu_forward_with_row_vector():
+    input = np.array([-5, 2, -2, 11])
+
+    activation, activation_cache = A.leaky_relu.forward(input)
+
+    assert(activation.shape == input.shape)
+    assert(len(activation_cache) == len(input))
+    assert(len(activation) == len(input))
+    assert_allclose(activation, np.array([-0.05, 2, -0.02, 11]))
+
+def test_leaky_relu_forward_with_column_vector():
+    input = np.array([[1.283462],
+                      [0.023864],
+                      [-2.00981624]])
+
+    activation, activation_cache = A.leaky_relu.forward(input)
+
+    assert(activation.shape == input.shape)
+    assert(len(activation_cache) == len(input))
+    assert(len(activation) == len(input))
+    assert_allclose(activation, np.array([[1.283462],
+                                          [0.023864],
+                                          [-0.0200981624]]))
+
+def test_leaky_relu_backward_with_positive_dA_positive_Z():
+    dA = np.array([0.9732684])
+    Z = np.array([1.764832])
+
+    dZ = A.leaky_relu.backward(dA, Z)
+
+    assert(dZ.shape == Z.shape)
+    assert_allclose(dZ, np.array([0.9732684]))
+
+def test_leaky_relu_backward_with_positive_dA_negative_Z():
+    dA = np.array([0.9732684])
+    Z = np.array([-1.764832])
+
+    dZ = A.leaky_relu.backward(dA, Z)
+
+    assert(dZ.shape == Z.shape)
+    assert_allclose(dZ, np.array([0.009732684]))
+
+def test_leaky_relu_backward_with_negative_dA_positive_Z():
+    dA = np.array([-2.3765840])
+    Z = np.array([0.47856])
+
+    dZ = A.leaky_relu.backward(dA, Z)
+
+    assert(dZ.shape == Z.shape)
+    assert_allclose(dZ, np.array([-2.3765840]))
+
+def test_leaky_relu_backward_with_negative_dA_negative_Z():
+    dA = np.array([-2.9655432])
+    Z = np.array([-0.896349])
+
+    dZ = A.leaky_relu.backward(dA, Z)
+
+    assert(dZ.shape == Z.shape)
+    assert_allclose(dZ, np.array([-0.029655432]))
+
+def test_leaky_relu_backward_with_zero_dA_positive_Z():
+    dA = np.array([0])
+    Z = np.array([0.454359])
+
+    dZ = A.leaky_relu.backward(dA, Z)
+
+    assert(dZ.shape == Z.shape)
+    assert_allclose(dZ, np.array([0]))
+
+def test_leaky_relu_backward_with_zero_dA_negative_Z():
+    dA = np.array([0])
+    Z = np.array([-1.34234])
+
+    dZ = A.leaky_relu.backward(dA, Z)
+
+    assert(dZ.shape == Z.shape)
+    assert_allclose(dZ, np.array([0]))
+
+def test_leaky_relu_backward_with_positive_dA_zero_Z():
+    dA = np.array([0.78562])
+    Z = np.array([0])
+
+    dZ = A.leaky_relu.backward(dA, Z)
+
+    assert(dZ.shape == Z.shape)
+    assert_allclose(dZ, np.array([0.0078562]))
+
+def test_leaky_relu_backward_with_negative_dA_zero_Z():
+    dA = np.array([-1.57862])
+    Z = np.array([0])
+
+    dZ = A.leaky_relu.backward(dA, Z)
+
+    assert(dZ.shape == Z.shape)
+    assert_allclose(dZ, np.array([-0.0157862]))
+
+def test_leaky_relu_backward_with_zero_dA_zero_Z():
+    dA = np.array([0])
+    Z = np.array([0])
+
+    dZ = A.leaky_relu.backward(dA, Z)
+
+    assert(dZ.shape == Z.shape)
+    assert_allclose(dZ, np.array([0]))
