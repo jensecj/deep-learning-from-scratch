@@ -28,8 +28,8 @@ class tanh:
     def forward(Z):
         """
         """
-        A = (np.exp(Z) - np.exp(-Z)) / (np.exp(Z) + np.exp(-Z))
-
+        # A = (np.exp(Z) - np.exp(-Z)) / (np.exp(Z) + np.exp(-Z))
+        A = np.tanh(Z)
         assert(A.shape == Z.shape)
 
         return A, Z
@@ -93,5 +93,16 @@ class leaky_relu:
 
         return dZ
 
+class softmax:
+    def forward(Z):
+        return np.exp(Z) / np.sum(np.exp(Z), axis=1, keepdims=True)
 
-# TODO: softmax, ...
+    def backward(dA, Z):
+        s = Z.reshape(-1,1)
+        sm = np.diagflat(s) - np.dot(s, s.T)
+
+        dZ = dA * sm
+
+        assert (dZ.shape == Z.shape)
+
+        return dZ

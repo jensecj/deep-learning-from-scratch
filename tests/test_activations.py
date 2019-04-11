@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.testing import assert_allclose
 
-import dlfs.activation_functions as A
+import dlfs.activations as A
 
 ###########
 # sigmoid #
