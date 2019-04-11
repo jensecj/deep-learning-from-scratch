@@ -3,9 +3,9 @@ from numpy.testing import assert_allclose
 
 from dlfs.network import Layer, Network
 import dlfs.network as nn
-import dlfs.activation_functions as A
+import dlfs.activations as A
 import dlfs.cost_functions as C
-import dlfs.optimization_functions as O
+import dlfs.optimizers as O
 
 def test_batch_gradient_descent():
     W1 = np.array([[-0.41675785, -0.05626683, -2.1361961,  1.64027081],
