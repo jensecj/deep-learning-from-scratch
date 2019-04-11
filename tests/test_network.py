@@ -107,7 +107,7 @@ def test_linear_activation_forward():
     Z, cache = nn._linear_activation_forward(prev_activations, weights, biases, A.relu)
     assert_allclose(Z, np.array([[3.43896131, 0.]]), rtol=1e-5, atol=0)
 
-def test_L_model_forward():
+def test_forward_propagation():
     # 5 unit input, 4 units out
     W1 = np.array([[ 0.35480861,  1.81259031, -1.3564758 , -0.46363197,  0.82465384],
                    [-1.17643148,  1.56448966,  0.71270509, -0.1810066 ,  0.53419953],
@@ -139,12 +139,10 @@ def test_L_model_forward():
                                  [-0.33588161, 1.23773784, 0.11112817, 0.12915125],
                                  [0.07612761, -0.15512816, 0.63422534, 0.810655]])
 
-    weights = [W1, W2, W3]
-    biases = [b1, b2, b3]
-
     parameters = { "W1": W1, "b1": b1, "W2": W2, "b2": b2, "W3": W3, "b3": b3 }
 
     layers = [ Layer(5),
+               Layer(5, A.relu),
                Layer(4, A.relu),
                Layer(1, A.sigmoid) ]
     net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
@@ -203,7 +201,7 @@ def test_linear_activation_backward():
     assert_allclose(weight_derivatives, np.array([[ 0.44513824, 0.37371418, -0.10478989]]), rtol=1e-5, atol=0)
     assert_allclose(bias_derivatives, np.array([[-0.20837892]]), rtol=1e-5, atol=0)
 
-def test_L_model_backward():
+def test_backward_propagation():
     np.random.seed(3)
     last_activations = np.array([[1.78862847, 0.43650985]])
     labels = np.array([[1, 0]])
