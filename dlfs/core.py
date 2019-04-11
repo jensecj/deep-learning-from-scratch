@@ -7,7 +7,7 @@ from typing import Any, List
 @dataclass(frozen=True)
 class Layer:
     hidden_units: int
-    activation: Any
+    activation: Any = None
 
 # TODO: fns for dimensions / num_layers?
 @dataclass
