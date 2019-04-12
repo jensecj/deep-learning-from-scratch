@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Any, List
 
 def squared_errors(predictions, labels):
     """
