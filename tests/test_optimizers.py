@@ -7,6 +7,22 @@ import dlfs.activations as A
 import dlfs.cost_functions as C
 import dlfs.optimizers as O
 
+def test_squared_errors_with_zero_predictions_zero_labels():
+    predictions = np.array([[0, 0, 0]])
+    labels = np.array([[0, 0, 0]])
+
+    cost = C.squared_errors(predictions, labels)
+    assert_allclose(cost, 0)
+
+def test_squared_errors_with_zero_predictions_positive_labels():
+    predictions = np.array([[0, 0, 0]])
+    labels = np.array([[0, 1.2, 0.324]])
+
+    cost = C.squared_errors(predictions, labels)
+    print(f"{cost:.10}")
+
+    assert_allclose(cost, 1.544976)
+
 def test_batch_gradient_descent():
     W1 = np.array([[-0.41675785, -0.05626683, -2.1361961,  1.64027081],
                    [-1.79343559, -0.84174737,  0.50288142, -1.24528809],
