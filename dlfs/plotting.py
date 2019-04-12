@@ -16,3 +16,9 @@ def decision_boundary(model, X, y):
     plt.ylabel('x2')
     plt.xlabel('x1')
     plt.scatter(X[0, :], X[1, :], c=y.ravel().tolist(), cmap=plt.cm.Spectral)
+
+def costs(costs):
+    costs = np.squeeze(costs)
+    plt.plot(costs)
+    plt.ylabel('cost')
+    plt.xlabel('iterations (per hundreds)')
