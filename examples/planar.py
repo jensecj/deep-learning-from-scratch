@@ -44,7 +44,10 @@ layers = [
 
 net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
 
-parameters, costs = nn.train(net, inputs, labels, 1.2, 10000)
+iterations = 2000
+learning_rate = 1.2
+
+parameters, costs = nn.train(net, inputs, labels, learning_rate, iterations)
 predictions = nn.predict(net, inputs, parameters)
 predictions = np.round(predictions)
 
@@ -54,4 +57,8 @@ print(f"accuracy: {accuracy*100:.3}%")
 
 plot.decision_boundary(lambda x: np.round(nn.predict(net, x.T, parameters)), inputs, labels)
 plt.title(f"Decision Boundary for network with {len(layers)} layers.")
+plt.show()
+
+plot.costs(costs)
+plt.title(f"Costs for {iterations} iterations with learning rate = {learning_rate}")
 plt.show()
