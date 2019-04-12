@@ -96,7 +96,11 @@ class leaky_relu:
 
 class softmax:
     def forward(Z):
-        return np.exp(Z) / np.sum(np.exp(Z), axis=1, keepdims=True)
+        A = np.exp(Z) / np.sum(np.exp(Z), axis=1, keepdims=True)
+
+        assert(A.shape == Z.shape)
+
+        return A, Z
 
     def backward(dA, Z):
         s = Z.reshape(-1,1)
