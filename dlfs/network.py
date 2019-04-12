@@ -16,7 +16,7 @@ def _initialize_parameters(net: Network):
                     bl -- bias vector of shape (network_dimensions[l], 1)
     """
     parameters = {}
-    network_dimensions = [ l.hidden_units for l in net.layers ]
+    network_dimensions = net.dimensions()
     num_layers = len(network_dimensions)
 
     print("network dimensions: {0}".format(network_dimensions))
