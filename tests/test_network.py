@@ -11,15 +11,16 @@ def test_initialize_network_with_one_hidden_layer():
     layers = [ Layer(5),
                Layer(4, A.relu),
                Layer(1, A.sigmoid) ]
-    net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
+    net = Network(layers, None, None)
 
     parameters = nn._initialize_parameters(net)
 
     print(parameters)
-    assert(parameters["W1"].shape == (4, 5))
-    assert(parameters["W2"].shape == (1, 4))
-    assert(parameters["b1"].shape == (4,1))
-    assert(parameters["b2"].shape == (1,1))
+
+    assert parameters["W1"].shape == (4, 5)
+    assert parameters["W2"].shape == (1, 4)
+    assert parameters["b1"].shape == (4,1)
+    assert parameters["b2"].shape == (1,1)
 
 def test_initialize_network_with_many_hidden_layers():
     layers = [ Layer(10),
@@ -27,21 +28,21 @@ def test_initialize_network_with_many_hidden_layers():
                Layer(6, A.relu),
                Layer(3, A.relu),
                Layer(2, A.sigmoid) ]
-    net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
+    net = Network(layers, None, None)
 
     parameters = nn._initialize_parameters(net)
 
     print(parameters)
 
-    assert(parameters["W1"].shape == (6, 10))
-    assert(parameters["W2"].shape == (6, 6))
-    assert(parameters["W3"].shape == (3, 6))
-    assert(parameters["W4"].shape == (2, 3))
+    assert parameters["W1"].shape == (6, 10)
+    assert parameters["W2"].shape == (6, 6)
+    assert parameters["W3"].shape == (3, 6)
+    assert parameters["W4"].shape == (2, 3)
 
-    assert(parameters["b1"].shape == (6,1))
-    assert(parameters["b2"].shape == (6,1))
-    assert(parameters["b3"].shape == (3,1))
-    assert(parameters["b4"].shape == (2,1))
+    assert parameters["b1"].shape == (6,1)
+    assert parameters["b2"].shape == (6,1)
+    assert parameters["b3"].shape == (3,1)
+    assert parameters["b4"].shape == (2,1)
 
 def test_predict():
     W1 = np.array([[-0.00615039,  0.0169021 ],
@@ -63,7 +64,7 @@ def test_predict():
     np.random.seed(1)
     X = np.random.randn(2, 3)
 
-    input_layers = X.shape[0]
+    input_layers = X.shape[1]
     output_layers = 1
 
     layers = [
@@ -74,16 +75,15 @@ def test_predict():
     net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
 
     predictions = nn.predict(net, X, parameters)
-    print(predictions)
     predictions = np.round(predictions)
+    print(predictions)
 
-    # assert(predictions.shape == (input_layers, 1))
+    assert predictions.shape == (1, input_layers)
+    assert_allclose(np.mean(predictions), 0.666666667)
 
-    # assert_allclose(np.mean(predictions), 0.666666667)
-
-###############
-# propagation #
-###############
+    ###############
+    # propagation #
+    ###############
 
 def test_linear_forward():
     activations = np.array([[ 1.62434536, -0.61175641],
@@ -94,9 +94,14 @@ def test_linear_forward():
 
     Z, linear_cache = nn._linear_forward(activations, weights, biases)
 
-    assert_allclose(Z, np.array([[3.26295337, -1.23429987]]), rtol=1e-5, atol=0)
+    print(activations)
+    print(Z)
 
-def test_linear_activation_forward():
+    assert Z.shape == (weights.shape[0], activations.shape[1])
+
+    assert_allclose(Z, np.array([[3.26295337, -1.23429987]]))
+
+def test_linear_activation_forward_with_sigmoid():
     prev_activations = np.array([[-0.41675785, -0.05626683],
                                  [-2.1361961,  1.64027081],
                                  [-1.79343559, -0.84174737]])
@@ -105,10 +110,31 @@ def test_linear_activation_forward():
     biases = np.array([[-0.90900761]])
 
     Z, cache = nn._linear_activation_forward(prev_activations, weights, biases, A.sigmoid)
-    assert_allclose(Z, np.array([[0.96890023, 0.11013289]]), rtol=1e-5, atol=0)
+
+    print(cache)
+    assert len(cache) == 2
+
+    print(Z)
+    assert Z.shape == (weights.shape[0], prev_activations.shape[1])
+
+    assert_allclose(Z, np.array([[0.96890023, 0.11013289]]))
+
+def test_linear_activation_forward_with_relu():
+    prev_activations = np.array([[-0.41675785, -0.05626683],
+                                 [-2.1361961,  1.64027081],
+                                 [-1.79343559, -0.84174737]])
+
+    weights = np.array([[ 0.50288142, -1.24528809, -1.05795222]])
+    biases = np.array([[-0.90900761]])
 
     Z, cache = nn._linear_activation_forward(prev_activations, weights, biases, A.relu)
     assert_allclose(Z, np.array([[3.43896131, 0.]]), rtol=1e-5, atol=0)
+
+    print(cache)
+    assert len(cache) == 2
+
+    print(Z)
+    assert Z.shape == (weights.shape[0], prev_activations.shape[1])
 
 def test_forward_propagation():
     # 5 unit input, 4 units out
@@ -151,8 +177,14 @@ def test_forward_propagation():
     net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
 
     last_activations, cache = nn._forward_propagation(net, prev_activations, parameters)
+
+    print(cache)
+    assert len(cache) == 3
+
+    print(last_activations)
+    assert last_activations.shape == (layers[3].hidden_units, layers[2].hidden_units)
+
     assert_allclose(last_activations, np.array([[0.03921668, 0.70498921, 0.19734387, 0.04728177]]), rtol=1e-5, atol=0)
-    assert(len(cache) == 3)
 
 def test_linear_backward():
     dZ = np.array([[ 1.62434536, -0.61175641]])
@@ -169,7 +201,7 @@ def test_linear_backward():
 
     prev_activation_derivatives, weight_derivatives, bias_derivatives = nn._linear_backward(dZ, linear_cache)
 
-    assert(len(prev_activation_derivatives) == 3)
+    assert len(prev_activation_derivatives) == 3
 
     assert_allclose(prev_activation_derivatives, np.array([[ 0.51822968, -0.19517421],
                                                            [-0.40506361, 0.15255393],
@@ -240,16 +272,16 @@ def test_backward_propagation():
                Layer(1, A.sigmoid) ]
     net = Network(layers, C.cross_entropy, O.batch_gradient_descent)
 
-    # activation_gradients, weight_gradients, bias_gradients = nn._backward_propagation(net, last_activations, labels, caches)
+    grads = nn._backward_propagation(net, last_activations, labels, caches)
 
-    # assert_allclose(activation_gradients[1], np.array([[ 0.12913162, -0.44014127],
-    #                                                    [-0.14175655, 0.48317296],
-    #                                                    [ 0.01663708, -0.05670698]]), rtol=1e-5, atol=0)
+    assert_allclose(grads["dA1"], np.array([[ 0.12913162, -0.44014127],
+                                            [-0.14175655, 0.48317296],
+                                            [ 0.01663708, -0.05670698]]), rtol=1e-5, atol=0)
 
-    # assert_allclose(weight_gradients[1], np.array([[ 0.41010002, 0.07807203, 0.13798444, 0.10502167],
-    #                                                [ 0., 0., 0., 0. ],
-    #                                                [ 0.05283652, 0.01005865, 0.01777766, 0.0135308 ]]), rtol=1e-5, atol=0)
+    assert_allclose(grads["dW1"], np.array([[ 0.41010002, 0.07807203, 0.13798444, 0.10502167],
+                                            [ 0., 0., 0., 0. ],
+                                            [ 0.05283652, 0.01005865, 0.01777766, 0.0135308 ]]), rtol=1e-5, atol=0)
 
-    # assert_allclose(bias_gradients[1], np.array([[-0.22007063],
-    #                                              [ 0. ],
-    #                                              [-0.02835349]]), rtol=1e-5, atol=0)
+    assert_allclose(grads["db1"], np.array([[-0.22007063],
+                                            [ 0. ],
+                                            [-0.02835349]]), rtol=1e-5, atol=0)
