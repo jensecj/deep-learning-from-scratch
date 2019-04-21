@@ -7,6 +7,8 @@ import dlfs.optimizers as O
 import dlfs.network as nn
 from dlfs.network import Layer, Network
 
+# TODO: test no layers, one layer, two layers
+
 def test_initialize_network_with_one_hidden_layer():
     layers = [ Layer(5),
                Layer(4, A.relu),

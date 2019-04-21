@@ -66,7 +66,6 @@ def _linear_activation_forward(A_prev, W, b, activation):
     cache -- a python dictionary containing "linear_cache" and "activation_cache";
              stored for computing the backward pass efficiently
     """
-
     Z, linear_cache = _linear_forward(A_prev, W, b)
     A, activation_cache = activation.forward(Z)
 

@@ -5,6 +5,9 @@ def squared_errors(predictions, labels):
     """
     SSE - Sum of Squared Errors.
     """
+    assert predictions.shape == labels.shape, "predictions and labels should have the same shape."
+    assert predictions.shape[0] == 1, "predictions should be a row vector"
+
     return np.sum(np.square(predictions - labels))
 
 def mean_squared_errors(predictions, labels):
