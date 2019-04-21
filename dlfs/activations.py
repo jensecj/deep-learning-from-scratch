@@ -1,5 +1,18 @@
 import numpy as np
 
+class linear:
+    @staticmethod
+    def forward(Z):
+        return Z, Z
+
+    @staticmethod
+    def backward(dA, Z):
+        dZ = dA * 1
+
+        assert (dZ.shape == Z.shape)
+
+        return dZ
+
 class sigmoid:
     @staticmethod
     def forward(Z):
