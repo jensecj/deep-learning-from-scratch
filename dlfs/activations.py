@@ -40,6 +40,7 @@ class tanh:
     @staticmethod
     def forward(Z):
         """
+        Return the hyperbolic tangent of Z.
         """
         # A = (np.exp(Z) - np.exp(-Z)) / (np.exp(Z) + np.exp(-Z))
         A = np.tanh(Z)

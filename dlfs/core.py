@@ -5,14 +5,13 @@ import random
 import numpy as np
 
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, List, Dict
 
 @dataclass(frozen=True)
 class Layer:
     hidden_units: int
     activation: Any = None
 
-# TODO: fns for dimensions / num_layers?
 @dataclass(frozen=True)
 class Network:
     layers: List[Layer]
